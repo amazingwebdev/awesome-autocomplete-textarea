@@ -35,7 +35,6 @@ export default {
   },
   computed: {
     filteredKeywords () {
-      this.selectedKeyIndex = -1;
       return this.keywords.filter(keyword => this.search.startsWith('{{') && keyword.key.toLowerCase().includes(this.search.toLowerCase()));
     }
   },
@@ -87,6 +86,7 @@ export default {
         return target.replace(new RegExp(search, 'g'), replacement);
       };
 
+      localStorage.setItem('richText', this.mainText);
       this.keywords.forEach(keyword => {
         const replacement = `<span style="background-color: ${keyword.color}; color: white;">${keyword.key}</span>`;
 
@@ -139,6 +139,13 @@ export default {
   mounted () {
     this.$refs.autoCompleteModal.$el.style.visibility = 'hidden';
     document.getElementById('message').focus();
+    this.mainText = localStorage.getItem('richText') || '';
+    this.updateHTML();
+  },
+  watch: {
+    filteredKeywords () {
+      this.selectedKeyIndex = -1;
+    }
   }
 }
 </script>
@@ -162,6 +169,7 @@ export default {
 
   .update-html {
     position: absolute;
+    z-index: -1;
 
     text-rendering: auto;
     color: initial;
